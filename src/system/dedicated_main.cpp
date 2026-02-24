@@ -15,20 +15,16 @@ int DedicatedMain(int argc, char** argv)
 {
     global_ArgumentParser->AddFlag(&Flags::Help);
     global_ArgumentParser->AddFlag(&Flags::Version);
-    global_ArgumentParser->AddFlag(&Flags::NoColors);
-    global_ArgumentParser->AddFlag(&Flags::DisableEditorHint);
 
     int parser_status{global_ArgumentParser->ParseArguments(argc, argv)};
     if(parser_status == ARG_STATUS_FAILED)
         { return 1; }
 
-    std::string program_name{"Nostalgia_Goggles"};
+    std::string program_name{"RoseTinted"};
 
     if(Flags::Help.IsActive())
     {
-        std::println("{}\n\t{}",
-            GetHelpMessage(program_name.data()),
-            GetVersionMessage(program_name.data()));
+        std::println("{}", GetHelpMessage(program_name.data()));
         return 0;
     }
     else if(Flags::Version.IsActive())
@@ -36,13 +32,6 @@ int DedicatedMain(int argc, char** argv)
         std::println("{}", GetVersionMessage(program_name.data()));
         return 0;
     }
-    else if(Flags::NoColors.IsActive())
-    {
-        for(int i{0}; i < 7; ++i)
-            { __all_labels_for_debugging[i]->enable_ansi_sequence = false; }
-    }
-
-    Settings::Engine::IsEditorHint = !Flags::DisableEditorHint.IsActive();
 
     RoseTinted application{};
     return Application()->Main();
