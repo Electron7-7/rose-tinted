@@ -7,10 +7,14 @@ find_library(NOSTALGIA_DEBUG NostalgiaDebug)
 mark_as_advanced(NOSTALGIA)
 mark_as_advanced(NOSTALGIA_DEBUG)
 
+add_executable(RoseTinted ${ROSE_TINTED_SOURCES})
+
 option(CMAKE_BUILD_TYPE "Choose between 'Debug' or 'Release'" Release)
-option(CMAKE_GENERATE_COMPILE_COMMANDS "Generate a compile_commands.json file" OFF)
+option(CMAKE_EXPORT_COMPILE_COMMANDS "Generate a compile_commands.json file" OFF)
+mark_as_advanced(CLEAR CMAKE_EXPORT_COMPILE_COMMANDS)
 option(ROSE_TINTED_DEBUG_USE_DEBUG "Use NostalgiaDebug when building the debug version" ON)
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    target_compile_definitions(RoseTinted PUBLIC NOSTALGIA_DEBUGGING)
     option(ROSE_TINTED_USE_ADDRESS_SANITIZER "Build with address sanitizer" ON)
     if(ROSE_TINTED_DEBUG_USE_DEBUG)
         if(NOSTALGIA_DEBUG)
@@ -25,7 +29,6 @@ else()
     set(NOSTALGIA_LIBRARY Nostalgia)
 endif()
 
-add_executable(RoseTinted ${ROSE_TINTED_SOURCES})
 target_include_directories(RoseTinted PRIVATE
     src/
     src/thirdparty/getargs/src
