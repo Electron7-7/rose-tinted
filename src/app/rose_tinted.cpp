@@ -1,5 +1,6 @@
 #include "./rose_tinted.hpp"
 #include "gui/imgui_implementor.hpp"
+#include "gui/imgui_main_menu.hpp"
 #include "things/player.hpp"
 #include <Nostalgia/application/window.hpp>
 #include <Nostalgia/events/event_queue.hpp>
@@ -27,6 +28,7 @@ int RoseTinted::Main()
     mMainWindow = IWindow::CreateWindow(IWindow::Properties{std::format("Rose-Tinted Glasses")});
 
     auto& imgui_impl{UI_Implementor::Create<ImGui_Implementor>()};
+    auto& main_menu{imgui_impl->CreateSolution<ImGuiMainMenu>()};
 
     IManager::Add(g_pPhysicsManager);
     IManager::Add(g_pTheatreManager);
@@ -39,6 +41,7 @@ int RoseTinted::Main()
 
     ThingFactory::AddThing(&sPlayerMaker, "RoseTintedPlayer3D", ThingType::NostalgiaPlayer3D);
 
+    g_pInputManager->SetAction({"toggle_main_menu", Key::Escape});
     g_pInputManager->SetAction({gToggleFullscreen, Key::F10});
     g_pInputManager->SetAction({"+forward",  Key::W});
     g_pInputManager->SetAction({"+backward", Key::S});

@@ -3,6 +3,7 @@ project(RoseTinted)
 set(ROSE_TINTED_SOURCES
     src/system/dedicated_main.cpp
     src/gui/imgui_implementor.cpp
+    src/gui/imgui_main_menu.cpp
     src/app/rose_tinted.cpp
     src/things/player.cpp
     src/thirdparty/DearImGui/imgui.cpp
