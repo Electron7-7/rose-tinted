@@ -1,3 +1,10 @@
+# ImGui
+imgui.ini
+
+# clangd
+compile_commands.json
+.cache/
+
 # Sublime Text Project
 rose-tinted.sublime-*
 
