@@ -24,11 +24,7 @@ void RoseTinted::Stop()
 
 int RoseTinted::Main()
 {
-    mMainWindow = IWindow::CreateWindow(IWindow::Properties{std::format("Nostalgia_Goggles v{} {}",
-        NOSTALGIA_VERSION_FULL,
-        (Settings::Engine::IsEditorHint)
-            ? ""
-            : "(Settings::Engine::IsEditorHint == false)")});
+    mMainWindow = IWindow::CreateWindow(IWindow::Properties{std::format("Rose-Tinted Glasses")});
 
     auto& imgui_impl{UI_Implementor::Create<ImGui_Implementor>()};
 
