@@ -21,7 +21,7 @@ R"(Usage: {} [-h|--help] [-v|--version]
         -v, --version   print program version
 )"};
 
-constexpr const char* _Version_Format_String{"\t{} v{}"};
+constexpr const char* _Version_Format_String{"{} v{}"};
 
 inline std::string GetHelpMessage(const char* inProgramName)
 { return std::format(_Help_Format_String, inProgramName); }
