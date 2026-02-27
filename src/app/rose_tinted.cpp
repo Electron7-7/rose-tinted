@@ -25,7 +25,7 @@ void RoseTinted::Stop()
 
 int RoseTinted::Main()
 {
-    mMainWindow = IWindow::CreateWindow(IWindow::Properties{std::format("Rose-Tinted Glasses")});
+    mMainWindow = IWindow::CreateNewWindow(IWindow::Properties{std::format("Rose-Tinted Glasses")});
 
     auto& imgui_impl{UI_Implementor::Create<ImGui_Implementor>()};
     auto& main_menu{imgui_impl->CreateSolution<ImGuiMainMenu>()};

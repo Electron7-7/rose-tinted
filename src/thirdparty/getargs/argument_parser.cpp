@@ -47,7 +47,7 @@ int ArgumentParser::ParseArguments(int argc, char** argv)
             {
                 index_of_positional_arguments++;
 
-                if((i+1) >= argc || std::string(argv[i+1]).starts_with("-")) // No argument was given to this option (end of array OR next item is most likely another flag/option)
+                if((i+1) >= argc || std::string(argv[i+1])[0] == '-') // No argument was given to this option (end of array OR next item is most likely another flag/option)
                 {
                     if(_options.at(i_o)->IsOptionMandatory())
                     {
