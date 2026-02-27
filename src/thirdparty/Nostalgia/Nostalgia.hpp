@@ -82,14 +82,4 @@
 #include <Nostalgia/theatre/things/resources/resource.hpp>    // IWYU pragma: keep
 #include <Nostalgia/theatre/things/thinkers/thinker.hpp>      // IWYU pragma: keep
 
-#ifdef _WIN32
-#   define NOSTALGIA_DLL_EXPORT __declspec(dllexport)
-#   ifndef NOSTALGIA_EXPORT
-#       define NOSTALGIA_EXPORT __declspec(dllimport)
-#   endif // !NOSTALGIA_EXPORT
-#else // !_WIN32
-#   define NOSTALGIA_DLL_EXPORT
-#   define NOSALGIA_EXPORT
-#endif // _WIN32
-
 #endif // NOSTALGIA_PRE_COMPILED_HEADER_H

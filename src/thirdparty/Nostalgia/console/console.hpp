@@ -5,7 +5,7 @@
 
 namespace Console
 {
-    struct NOSTALGIA_EXPORT Variable
+    struct Variable
     {
         enum Type { STRING_TYPE, FLOAT_TYPE, INTEGER_TYPE };
         Type        type{STRING_TYPE};
