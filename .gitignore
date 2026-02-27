@@ -11,8 +11,8 @@ rose-tinted.sublime-*
 # Build System Folders
 Linux_Debug/
 Linux_Release/
-Windows_Debug/
-Windows_Release/
+Windows/
+.vc/
 
 # Prerequisites
 *.d
