@@ -6,6 +6,8 @@ set(ROSE_TINTED_SOURCES
     src/gui/imgui_main_menu.cpp
     src/app/rose_tinted.cpp
     src/things/player.cpp
+    src/thirdparty/getargs/argument.cpp
+    src/thirdparty/getargs/argument_parser.cpp
     src/thirdparty/DearImGui/imgui.cpp
     src/thirdparty/DearImGui/imgui_demo.cpp
     src/thirdparty/DearImGui/imgui_draw.cpp
