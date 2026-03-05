@@ -1,6 +1,7 @@
 #include "./program_arguments.hpp"
 #include "app/rose_tinted.hpp"
 #include <getargs/argument_parser.hpp>
+#include <Nostalgia/Nostalgia.hpp>
 #include <Nostalgia/filesystem/filesystem.hpp>
 #include <Nostalgia/application/application.hpp>
 #include <Nostalgia/settings/engine.hpp>
@@ -32,6 +33,9 @@ int DedicatedMain(int argc, char** argv)
         std::println("{}", GetVersionMessage(program_name.data()));
         return 0;
     }
+
+    if(NOSTALGIA_VERSION_PATCH < 6)
+        { return !print_error("Version mismatch: please use Nostalgia v0.1.6 or higher."); }
 
     RoseTinted application{};
     return Application()->Main();
