@@ -13,6 +13,12 @@ void ImGuiMainMenu::Input(InputEvent* inEvent)
 {
     if(inEvent->IsInputAction() and inEvent->IsActive("toggle_main_menu"))
         { mMainMenuOpen = !mMainMenuOpen; }
+    else if(inEvent->IsInputAction() and inEvent->IsActive("toggle_fullscreen"))
+    {
+        MainWindow()->SetWindowMode((MainWindow()->IsFullscreen())
+            ? IWindow::WINDOW_MODE_WINDOWED
+            : IWindow::WINDOW_MODE_FULLSCREEN);
+    }
 }
 
 void ImGuiMainMenu::Update()
