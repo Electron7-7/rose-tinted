@@ -14,18 +14,27 @@
 #include <Nostalgia/settings/engine.hpp>
 #include <Nostalgia/ui/implementor.hpp>
 #include <Nostalgia/theatre/thing_factory.hpp>
+#include <thread>
 
-std::string gToggleFullscreen{"ToggleFullscreen"};
+bool RoseTinted::m_sIsRunning{false};
 
 Shared<Thing> sPlayerMaker()
 { return MakeShared<RoseTintedPlayer3D>(); }
+
+void RoseTinted::m_sApplicationRuntimeLoop()
+{
+    do // app loop
+    {
+
+    } while(m_sIsRunning);
+}
 
 void RoseTinted::Stop()
 { IManager::Stop(); }
 
 int RoseTinted::Main()
 {
-    mMainWindow = IWindow::CreateNewWindow(IWindow::Properties{std::format("Rose-Tinted Glasses")});
+    mMainWindow = IWindow::CreateNewWindow(IWindow::Properties{std::format("Rose-Tinted Glasses (Using Nostalgia v" NOSTALGIA_VERSION_STRING ")")});
 
     auto& imgui_impl{UI_Implementor::Create<ImGui_Implementor>()};
     auto& main_menu{imgui_impl->CreateSolution<ImGuiMainMenu>()};
@@ -42,17 +51,20 @@ int RoseTinted::Main()
     ThingFactory::AddThing(&sPlayerMaker, "RoseTintedPlayer3D", ThingType::NostalgiaPlayer3D);
 
     g_pInputManager->SetAction({"toggle_main_menu", Key::Escape});
-    g_pInputManager->SetAction({gToggleFullscreen, Key::F10});
+    g_pInputManager->SetAction({"toggle_fullscreen", Key::F10});
     g_pInputManager->SetAction({"+forward",  Key::W});
     g_pInputManager->SetAction({"+backward", Key::S});
     g_pInputManager->SetAction({"+left",     Key::A});
     g_pInputManager->SetAction({"+right",    Key::D});
 
-    IManager::Start(); // gameloop
+    m_sIsRunning = true;
+    std::thread app_loop_thread{m_sApplicationRuntimeLoop};
+    IManager::Start(); // manager loop
+    m_sIsRunning = false;
     IManager::ShutdownAllManagers();
     IManager::RemoveAll();
-
-    return 0;
+    app_loop_thread.join();
+    return mExitValue;
 }
 
 void RoseTinted::Event(AppEvent* inEvent)
@@ -63,13 +75,7 @@ void RoseTinted::Event(AppEvent* inEvent)
 
 void RoseTinted::Input(InputEvent* event)
 {
-    if(event->IsActive(gToggleFullscreen))
-    {
-        MainWindow()->SetWindowMode((MainWindow()->GetWindowMode() == IWindow::WINDOW_MODE_WINDOWED)
-            ? IWindow::WINDOW_MODE_FULLSCREEN
-            : IWindow::WINDOW_MODE_WINDOWED);
-    }
-    else if((event->IsJustPressed(Key::Q) and event->IsModifierActive(Key::Mod_Control))
+    if((event->IsJustPressed(Key::Q) and event->IsModifierActive(Key::Mod_Control))
         or event->IsJustPressed(Key::F8))
         { EventManager::Queue()->add<AppEvent>(AppEvent::WindowClose); }
 }

@@ -13,8 +13,12 @@ public:
     const char* Name() final { return "Rose Tinted"; }
     void Input(InputEvent*) final;
     void Event(AppEvent*) final;
-};
 
-extern std::string gToggleFullscreen;
+private:
+    int  mExitValue{0};
+
+    static bool m_sIsRunning;
+    static void m_sApplicationRuntimeLoop();
+};
 
 #endif // ROSE_TINTED_H
