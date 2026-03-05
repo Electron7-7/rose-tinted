@@ -2,16 +2,25 @@
 
 RoseTintedPlayer3D ThePlayer
 {
-    Origin [0, 1, 0]
+    Origin = [0, 1, 0]
     Child : Camera3D PlayerCamera
     {
         EnvironmentColor [0.06, 0.08, 0.1]
     }
 }
 
-Sprite2D TestSprite
+MeshInstance3D TestMesh
 {
-    Origin [500, -350]
-    Scale [0.5, 0.5]
-    Texture <LolBitTexture>
+    Mesh = <DefaultCube>
+    Child : Material TestMat
+    {
+        DiffuseTexture = <LolBitTexture>
+    }
+    MaterialOverride = <TestMat>
+    Position = [-1, 1, -5]
+}
+
+DirectionalLight3D TheSun
+{
+    Rotation = [-75, -5, 10]
 }
