@@ -1,11 +1,16 @@
 #ifndef NOSTALGIA_PRE_COMPILED_HEADER_H
 #define NOSTALGIA_PRE_COMPILED_HEADER_H
 
-#define NOSTALGIA_VERSION_MAJOR "0"
-#define NOSTALGIA_VERSION_MINOR "1"
-#define NOSTALGIA_VERSION_PATCH "5"
-#define NOSTALGIA_VERSION_FULL \
-    NOSTALGIA_VERSION_MAJOR "." NOSTALGIA_VERSION_MINOR "." NOSTALGIA_VERSION_PATCH
+#define __n_make_string_2(x) #x
+#define __n_make_string(x) __n_make_string_2(x)
+
+#define NOSTALGIA_VERSION_MAJOR 0
+#define NOSTALGIA_VERSION_MINOR 1
+#define NOSTALGIA_VERSION_PATCH 6
+#define NOSTALGIA_VERSION_STRING \
+    __n_make_string(NOSTALGIA_VERSION_MAJOR) "." \
+    __n_make_string(NOSTALGIA_VERSION_MINOR) "." \
+    __n_make_string(NOSTALGIA_VERSION_PATCH)
 
 #ifdef _WIN32
 #   include <windows.h> // IWYU pragma: keep
@@ -13,7 +18,7 @@
 #   include <tchar.h>   // IWYU pragma: keep
 #   define DIV 1048576
 #   define WIDTH 7
-#endif
+#endif // _WIN32
 
 #ifdef linux
 #   include <unistd.h> // IWYU pragma: keep
