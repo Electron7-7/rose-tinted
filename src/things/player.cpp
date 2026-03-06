@@ -1,5 +1,8 @@
 #include "./player.hpp"
+#include "gui/gui_globals.hpp"
+#include <Nostalgia/application/application.hpp>
 #include <Nostalgia/theatre/things/thinkers/3d/collider_3d.hpp>
+#include <Nostalgia/theatre/things/thinkers/3d/mesh_instance_3d.hpp>
 #include <Nostalgia/events/event.hpp>
 #include <Nostalgia/managers/input_manager.hpp>
 #include <Nostalgia/physics/engine.hpp>
@@ -15,6 +18,7 @@ void RoseTintedPlayer3D::SetVariables(Farg<ThingData> data)
 {
     NostalgiaPlayer3D::SetVariables(data);
 
+    data.get_variable(mCockpitOffset, "CockpitOffset");
     data.get_variable(Settings::Player::EnableGravity, "EnableGravity", "Gravity", "Fall");
 }
 
@@ -22,6 +26,7 @@ Shared<ThingData> RoseTintedPlayer3D::GetVariables() const
 {
     Shared<ThingData> data{NostalgiaPlayer3D::GetVariables()};
 
+    data->set_variable(mCockpitOffset, "CockpitOffset");
     data->set_variable(Settings::Player::EnableGravity, "EnableGravity");
 
     return data;
@@ -48,6 +53,15 @@ void RoseTintedPlayer3D::Ready()
         my_theatre()->SetParent(mMainColliderID = my_theatre()->CreateThing(coll_dat), mUID);
         mLocalTransform.scale = glm::vec3{1.0f};
     }
+
+    if(auto cockpit{my_theatre()->GetThing("Cockpit")};
+        not cockpit->uid().invalid())
+            { mCockPitID = cockpit->uid(); }
+
+    GUI::CloseAll();
+    GUI::SetInputFocus(false);
+    MainWindow()->SetMouseMode(IWindow::MOUSE_MODE_DISABLED);
+    mCaptureKeyboard = mCaptureMouse = true;
 }
 
 void RoseTintedPlayer3D::Tick()
@@ -87,7 +101,20 @@ void RoseTintedPlayer3D::Tick()
         }
     }
 
-    PhysicsEngine::Inst()->BodyInterface().SetLinearVelocity(collider->id(),
-        Math::Convert<JPH::Vec3>(mVelocity));
+    auto phys{PhysicsEngine::Instance()};
+    auto& body_interface{phys->BodyInterface()};
+    // auto jolt{phys->System()};
+
+    body_interface.SetLinearVelocity(collider->id(), Math::Convert<JPH::Vec3>(mVelocity));
+    body_interface.SetRotation(collider->id(), Math::Convert<JPH::Quat>(glm::normalize(mLocalTransform.quaternion)), JPH::EActivation::Activate);
     SetPosition(collider->Position());
+    if(mCockPitID.invalid())
+        { return; }
+    auto cockpit{my_theatre()->GetThinker<Actor3D>(mCockPitID)};
+    cockpit->SetPosition(mLocalTransform.position);
+    if(not InputManager::IsKeyDown(Key::LeftAlt))
+        { cockpit->SetQuaternion(mLocalTransform.quaternion); }
 }
+
+ID RoseTintedPlayer3D::GetMainColliderID() const
+{ return mMainColliderID; }
