@@ -2,10 +2,13 @@ project(RoseTinted)
 
 set(ROSE_TINTED_SOURCES
     src/system/dedicated_main.cpp
+    src/gui/gui_globals.cpp
     src/gui/imgui_implementor.cpp
+    src/gui/imgui_debugger.cpp
     src/gui/imgui_main_menu.cpp
     src/app/rose_tinted.cpp
     src/things/player.cpp
+    src/things/collision_tester_3d.cpp
     src/thirdparty/getargs/argument.cpp
     src/thirdparty/getargs/argument_parser.cpp
     src/thirdparty/DearImGui/imgui.cpp
