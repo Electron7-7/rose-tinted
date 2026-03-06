@@ -1,26 +1,139 @@
 @TestingTheatre#0
 
+Mesh CockpitMesh
+{
+    Model = 'assets/cockpit.obj'
+    Material = <CockpitMaterial>
+    Child : Material CockpitMaterial
+    {
+        NoTexture = [true]
+        Color = [0.9, 1, 1]
+        SpecularStrength = [0]
+    }
+}
+
+Actor3D Cockpit
+{
+    Child : MeshInstance3D CockpitMeshInstance
+    {
+        Origin = [0, -1, 0]
+        Mesh = <CockpitMesh>
+    }
+}
+
 RoseTintedPlayer3D ThePlayer
 {
-    Origin = [0, 1, 0]
+    Origin = [0, 0, 0]
+    Child : Collider3D PlayerCollider
+    {
+        Scale = [1.5, 1, 2.5]
+        Motion = (Kinematic)
+    }
     Child : Camera3D PlayerCamera
     {
+        Origin = [0, 0, 0]
         EnvironmentColor [0.06, 0.08, 0.1]
     }
 }
 
-MeshInstance3D TestMesh
+CollisionTester3D CollisionTester1
 {
-    Mesh = <DefaultCube>
-    Child : Material TestMat
+    Child : MeshInstance3D TestMesh
     {
-        DiffuseTexture = <LolBitTexture>
+        Mesh = <DefaultCube>
+        Child : Material TestMat
+        {
+            DiffuseTexture = <LolBitTexture>
+        }
+        MaterialOverride = <TestMat>
     }
-    MaterialOverride = <TestMat>
-    Position = [-1, 1, -5]
+    Child = <TestMesh>
+    Position = [-1, 1, -7]
+    Gravity = [1]
 }
 
-DirectionalLight3D TheSun
+CollisionTester3D CollisionTester2
 {
-    Rotation = [-75, -5, 10]
+    Child : MeshInstance3D TestMesh2
+    {
+        Mesh = <DefaultCube>
+        Child : Material TestMat2
+        {
+            DiffuseTexture = <DoomTexture>
+        }
+        MaterialOverride = <TestMat2>
+    }
+    Child = <TestMesh2>
+    Position = [3, 1.2, -7]
+    Direction = [-1,0,0]
+    Speed = [250]
+    Gravity = [1]
+}
+
+CollisionTester3D CollisionTester3
+{
+    Child : MeshInstance3D TestMesh3
+    {
+        Mesh = <DefaultCube>
+        MaterialOverride = <TestMat2>
+    }
+    Position = [-2, 4, -3]
+    Rotation = [-10, -50, 77]
+    Direction = [-0.5,-1,0]
+    Speed = [350]
+    Gravity = [0]
+}
+
+CollisionTester3D CollisionTester4
+{
+    Child : MeshInstance3D TestMesh4
+    {
+        Mesh = <DefaultCube>
+        MaterialOverride = <TestMat>
+    }
+    Position = [1, 3, -2.5]
+    Rotation = [0, 10, -77]
+    Direction = [-1,0.3,-0.1]
+    Speed = [450]
+    Gravity = [0]
+}
+
+Collider3D Floor
+{
+    Motion = (Static)
+    Position = [0, -3, 0]
+    Scale = [100, 1, 100]
+    Child : MeshInstance3D FloorMesh
+    {
+        Mesh = <DefaultCube>
+        Child : Material FloorMat
+        {
+            DiffuseTexture = <DoomTexture>
+        }
+        MaterialOverride = <FloorMat>
+    }
+}
+
+SpotLight3D TheSun
+{
+    Position = [4, 100, -7]
+    RotationDegrees = [-100, 0, 0]
+    Color = [1,0.945,0.726]
+    Energy = [2]
+    Attenuation = [0.3]
+    Range = [450]
+    SpotAngle = [50]
+    SpotAngleFade = [25]
+}
+
+SpotLight3D SomeLight
+{
+    Position = [0.6, 10.65, -9.7]
+    RotationDegrees = [-108, -14, -13]
+    Color = [0.207,0.735,0.094]
+    Energy = [5]
+    Attenuation = [2]
+    Range = [60]
+    SpotAngle = [30]
+    SpotAngleFade = [20]
 }
