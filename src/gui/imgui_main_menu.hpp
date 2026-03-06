@@ -10,12 +10,12 @@ public:
     void Update() final;
     void Input(InputEvent*) final;
 
+    static void SetOpen(bool inIsOpen);
+
 private:
-    bool mMainMenuOpen{true};
+    static bool m_sOpen;
     std::string mTheatrePath{"Theatres/TestingTheatre.nt"};
     std::string mLastTheatrePath{mTheatrePath};
 };
-
-extern ImGuiMainMenu* g_pMainMenu;
 
 #endif // IMGUI_MAIN_MENU_H
