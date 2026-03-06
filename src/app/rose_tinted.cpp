@@ -1,7 +1,9 @@
 #include "./rose_tinted.hpp"
 #include "gui/imgui_implementor.hpp"
 #include "gui/imgui_main_menu.hpp"
+#include "gui/imgui_debugger.hpp"
 #include "things/player.hpp"
+#include "things/test_things.hpp"
 #include <Nostalgia/application/window.hpp>
 #include <Nostalgia/events/event_queue.hpp>
 #include <Nostalgia/events/action.hpp>
@@ -17,9 +19,6 @@
 #include <thread>
 
 bool RoseTinted::m_sIsRunning{false};
-
-Shared<Thing> sPlayerMaker()
-{ return MakeShared<RoseTintedPlayer3D>(); }
 
 void RoseTinted::m_sApplicationRuntimeLoop()
 {
@@ -38,6 +37,7 @@ int RoseTinted::Main()
 
     auto& imgui_impl{UI_Implementor::Create<ImGui_Implementor>()};
     auto& main_menu{imgui_impl->CreateSolution<ImGuiMainMenu>()};
+    auto& debugger{imgui_impl->CreateSolution<ImGuiDebugger>()};
 
     IManager::Add(g_pPhysicsManager);
     IManager::Add(g_pTheatreManager);
@@ -48,7 +48,8 @@ int RoseTinted::Main()
 
     IManager::InitAllManagers();
 
-    ThingFactory::AddThing(&sPlayerMaker, "RoseTintedPlayer3D", ThingType::NostalgiaPlayer3D);
+    ThingFactory::AddThing(&ThingFactory::ThingMakerTemplate<RoseTintedPlayer3D>, "RoseTintedPlayer3D", ThingType::NostalgiaPlayer3D);
+    ThingFactory::AddThing(&ThingFactory::ThingMakerTemplate<CollisionTester3D>, "CollisionTester3D", ThingType::Collider3D);
 
     g_pInputManager->SetAction({"toggle_main_menu", Key::Escape});
     g_pInputManager->SetAction({"toggle_fullscreen", Key::F10});
