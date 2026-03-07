@@ -34,8 +34,8 @@ int DedicatedMain(int argc, char** argv)
         return 0;
     }
 
-    if(NOSTALGIA_VERSION_PATCH < 6)
-        { return !print_errorv(VERBOSE0, "Version mismatch: please use Nostalgia v0.1.6 or higher."); }
+    if(NOSTALGIA_VERSION_MINOR < 2)
+        { return !print_errorv(VERBOSE0, "Version mismatch: please use Nostalgia v0.2.0 or higher."); }
 
     RoseTinted application{};
     return Application()->Main();
