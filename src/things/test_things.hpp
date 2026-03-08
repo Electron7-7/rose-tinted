@@ -17,10 +17,14 @@ public:
     bool mHadHit{false};
     std::vector<JPH::BodyID> mHitBodyIDs{};
 
+protected:
+    void OnCollisionDetected(Farg<JPH::BodyID>,ID) override;
+
 private:
     glm::vec3 mMovementDirection{0.0f};
     float mMovementSpeed{1.0f};
     float mGravity{0.0f};
+    ID mPlayerColliderID{};
 };
 
 #endif // TEST_THINGS_H

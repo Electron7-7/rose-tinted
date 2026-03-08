@@ -14,6 +14,8 @@ public:
     void Input(InputEvent*) final;
     void Event(AppEvent*) final;
 
+    static void TriggerGameOver();
+
 private:
     int  mExitValue{0};
 

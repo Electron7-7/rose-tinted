@@ -1,4 +1,5 @@
 #include "./rose_tinted.hpp"
+#include "gui/gui_globals.hpp"
 #include "gui/imgui_implementor.hpp"
 #include "gui/imgui_main_menu.hpp"
 #include "gui/imgui_debugger.hpp"
@@ -26,6 +27,13 @@ void RoseTinted::m_sApplicationRuntimeLoop()
     {
 
     } while(m_sIsRunning);
+}
+
+void RoseTinted::TriggerGameOver()
+{
+    g_pTheatreManager->ShutdownTheatre();
+    GUI::OpenAll();
+    MainWindow()->SetMouseMode(IWindow::MOUSE_MODE_VISIBLE);
 }
 
 void RoseTinted::Stop()

@@ -1,4 +1,6 @@
 #include "./test_things.hpp"
+#include "app/rose_tinted.hpp"
+#include "things/player.hpp"
 #include <Nostalgia/physics/engine.hpp>
 #include <Nostalgia/theatre/theatre.hpp>
 
@@ -57,4 +59,16 @@ void CollisionTester3D::Tick()
     if(auto new_pos{Math::Convert<glm::vec3>(body_interface.GetCenterOfMassPosition(mBodyID))};
         new_pos != mLocalTransform.position)
             { Actor3D::SetPosition(new_pos); }
+}
+
+void CollisionTester3D::OnCollisionDetected(Farg<JPH::BodyID> inBodyID, ID inColliderID)
+{
+    if(mPlayerColliderID.invalid())
+    {
+        auto player{my_theatre()->GetThinker<RoseTintedPlayer3D>(UID::a_Player)};
+        mPlayerColliderID = player->GetMainColliderID();
+    }
+
+    if(inColliderID == mPlayerColliderID)
+        { RoseTinted::TriggerGameOver(); }
 }
