@@ -1,5 +1,8 @@
 @TestingTheatre#0
 
+declare RoseTintedPlayer3D inherits NostalgiaPlayer3D
+declare CollisionTester3D inherits Collider3D
+
 Mesh CockpitMesh
 {
     Model = 'assets/cockpit.obj'
