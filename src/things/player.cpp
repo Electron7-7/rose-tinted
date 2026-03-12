@@ -14,6 +14,11 @@
 
 using namespace TheatreFile;
 
+float RoseTintedPlayer3D::m_sMaxSpeed{10.0f};
+float RoseTintedPlayer3D::m_sVelocityMultiplier{5.0f};
+float RoseTintedPlayer3D::m_sAngularFriction{0.5f};
+float RoseTintedPlayer3D::m_sLinearFriction{0.1f};
+
 void RoseTintedPlayer3D::SetVariables(Farg<ThingData> data)
 {
     NostalgiaPlayer3D::SetVariables(data);
@@ -48,10 +53,12 @@ void RoseTintedPlayer3D::Ready()
         coll_dat.set_variable(mLocalTransform.position, "Origin");
         coll_dat.set_variable(mLocalTransform.quaternion, "Quaternion");
         coll_dat.set_variable(mLocalTransform.scale, "Scale");
-        coll_dat.set_variable(MotionType::Kinematic, "Motion");
+        coll_dat.set_variable(MotionType::Dynamic, "Motion");
         coll_dat.set_variable(ShapeType::Box, "Shape");
-        my_theatre()->SetParent(mMainColliderID = my_theatre()->CreateThing(coll_dat), mUID);
+        mMainColliderID = my_theatre()->CreateThing(coll_dat);
         mLocalTransform.scale = glm::vec3{1.0f};
+        PhysicsEngine::Instance()->BodyInterface().SetGravityFactor(my_theatre()
+            ->GetThinker<Collider3D>(mMainColliderID)->id(), 0);
     }
 
     if(auto cockpit{my_theatre()->GetThing("Cockpit")};
@@ -66,54 +73,61 @@ void RoseTintedPlayer3D::Ready()
 
 void RoseTintedPlayer3D::Tick()
 {
-    if(mCaptureMouse)
+    if(mCaptureKeyboard)
+    {
+        mThrust = InputManager::IsActionDown("forward") -
+            InputManager::IsActionDown("backward");
+        mYaw = InputManager::IsActionDown("turn_left") -
+            InputManager::IsActionDown("turn_right");
+        mPitch = InputManager::IsActionDown("tilt_up") -
+            InputManager::IsActionDown("tilt_down");
+        mRoll = InputManager::IsActionDown("roll_left") -
+            InputManager::IsActionDown("roll_right");
+    }
+    else
+        { mYaw = mPitch = mRoll = mThrust = 0.0f; }
+
+    auto collider{my_theatre()->GetThinker<Collider3D>(mMainColliderID)};
+    auto phys{PhysicsEngine::Instance()};
+    auto& body_interface{phys->BodyInterface()};
+    FAUTO quaternion{Quaternion()};
+
+    glm::vec3 torque{ quaternion * glm::vec3{mPitch, mYaw, mRoll} * m_sVelocityMultiplier };
+    glm::vec3 thrust{ quaternion * Settings::World::Front() * mThrust };
+
+    JPH::Vec3 angular{ body_interface.GetAngularVelocity(collider->id()) };
+    JPH::Vec3 linear{ body_interface.GetLinearVelocity(collider->id()) };
+    JPH::Vec3 linear_air_resistance{JPH::Vec3::sZero()};
+    JPH::Vec3 angular_air_resistance{JPH::Vec3::sZero()};
+
+    for(short i{0}; i < 3; ++i)
+    {
+        if(std::abs(angular[i]) > 0.0f)
+            { angular_air_resistance.SetComponent(i, (-angular[i] * 0.1f) * m_sAngularFriction); }
+        if(std::abs(linear[i]) > 0.0f)
+            { linear_air_resistance.SetComponent(i, (-linear[i] * 0.1f) * m_sLinearFriction); }
+    }
+
+    body_interface.AddTorque(collider->id(), Math::Convert<JPH::Vec3>(torque));
+    body_interface.AddLinearAndAngularVelocity(collider->id(),
+        Math::Convert<JPH::Vec3>(thrust) + linear_air_resistance,
+        angular_air_resistance);
+    body_interface.SetMaxLinearVelocity(collider->id(), m_sMaxSpeed);
+
+    SetPosition(collider->Position());
+    if(not InputManager::IsKeyDown(Key::LeftAlt))
+        { SetQuaternion(collider->Quaternion()); }
+    else if(mCaptureMouse)
     {
         mLookWish = InputManager::MouseMotion() * Settings::Player::MouseSensitivity * Settings::Player::MouseSensitivityScale;
         SetRotationDegrees(RotationDegrees() - glm::vec3{mLookWish.y, mLookWish.x, 0.0f});
     }
-    if(mCaptureKeyboard)
+    if(not mCockPitID.invalid())
     {
-        mMovementDirection.x = InputManager::IsActionDown("+right")   - InputManager::IsActionDown("+left");
-        mMovementDirection.z = InputManager::IsActionDown("+forward") - InputManager::IsActionDown("+backward");
+        auto cockpit{my_theatre()->GetThinker<Actor3D>(mCockPitID)};
+        cockpit->SetPosition(collider->Position());
+        cockpit->SetQuaternion(collider->Quaternion());
     }
-    else
-        { mMovementDirection.x = mMovementDirection.z = 0.0f; }
-
-    auto collider{my_theatre()->GetThinker<Collider3D>(mMainColliderID)};
-
-    glm::vec3 l_FrontBackVelocity{(Quaternion() * Settings::World::Front()) *
-        mMovementDirection.z * Settings::Player::MovementSpeed};
-    glm::vec3 l_LeftRightVelocity{(Quaternion() * Settings::World::Right()) *
-        mMovementDirection.x * Settings::Player::MovementSpeed};
-    glm::vec3 wish_velocity{l_FrontBackVelocity + l_LeftRightVelocity};
-
-    for(int i{0}; i < 3; ++i)
-    {
-        if(wish_velocity[i] == mVelocity[i])
-            { continue; }
-        else if(wish_velocity[i] == 0.0f)
-            { mVelocity[i] = 0.0f; }
-        else
-        {
-            mVelocity[i] += wish_velocity[i] / Settings::Player::MovementAcceleration;
-            if(glm::abs(mVelocity[i]) > glm::abs(wish_velocity[i]))
-                { mVelocity[i] = wish_velocity[i]; }
-        }
-    }
-
-    auto phys{PhysicsEngine::Instance()};
-    auto& body_interface{phys->BodyInterface()};
-    // auto jolt{phys->System()};
-
-    body_interface.SetLinearVelocity(collider->id(), Math::Convert<JPH::Vec3>(mVelocity));
-    body_interface.SetRotation(collider->id(), Math::Convert<JPH::Quat>(glm::normalize(mLocalTransform.quaternion)), JPH::EActivation::Activate);
-    SetPosition(collider->Position());
-    if(mCockPitID.invalid())
-        { return; }
-    auto cockpit{my_theatre()->GetThinker<Actor3D>(mCockPitID)};
-    cockpit->SetPosition(mLocalTransform.position);
-    if(not InputManager::IsKeyDown(Key::LeftAlt))
-        { cockpit->SetQuaternion(mLocalTransform.quaternion); }
 }
 
 ID RoseTintedPlayer3D::GetMainColliderID() const

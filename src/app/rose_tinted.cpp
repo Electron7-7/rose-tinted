@@ -61,10 +61,15 @@ int RoseTinted::Main()
 
     g_pInputManager->SetAction({"toggle_main_menu", Key::Escape});
     g_pInputManager->SetAction({"toggle_fullscreen", Key::F10});
-    g_pInputManager->SetAction({"+forward",  Key::W});
-    g_pInputManager->SetAction({"+backward", Key::S});
-    g_pInputManager->SetAction({"+left",     Key::A});
-    g_pInputManager->SetAction({"+right",    Key::D});
+    g_pInputManager->SetAction({"forward",    Key::W});
+    g_pInputManager->SetAction({"backward",   Key::S});
+    g_pInputManager->SetAction({"turn_left",  Key::A});
+    g_pInputManager->SetAction({"turn_right", Key::D});
+    g_pInputManager->SetAction({"attack",     Key::Space});
+    g_pInputManager->SetAction({"tilt_up",    Key::Up});
+    g_pInputManager->SetAction({"tilt_down",  Key::Down});
+    g_pInputManager->SetAction({"roll_left",  Key::Left});
+    g_pInputManager->SetAction({"roll_right", Key::Right});
 
     m_sIsRunning = true;
     std::thread app_loop_thread{m_sApplicationRuntimeLoop};

@@ -17,13 +17,21 @@ public:
     bool mCaptureMouse{false},
         mCaptureKeyboard{false};
 
+    static float m_sMaxSpeed;
+    static float m_sVelocityMultiplier;
+    static float m_sAngularFriction;
+    static float m_sLinearFriction;
+
 protected:
+    friend class ImGuiDebugger;
     ID mMainColliderID{},
         mCockPitID{};
     bool mEnableCollision{true};
-    glm::vec3 mVelocity{0.0f},
-        mLookWish{0.0f},
-        mMovementDirection{0.0f},
+    float mThrust{0.0f},
+        mYaw{0.0f},
+        mRoll{0.0f},
+        mPitch{0.0f};
+    glm::vec3 mLookWish{0.0f},
         mCockpitOffset{0.0f};
 };
 
