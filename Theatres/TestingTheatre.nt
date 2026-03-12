@@ -24,11 +24,6 @@ Actor3D Cockpit
 RoseTintedPlayer3D ThePlayer
 {
     Origin = [0, 0, 0]
-    Child : Collider3D PlayerCollider
-    {
-        Scale = [1.5, 1, 2.5]
-        Motion = (Kinematic)
-    }
     Child : Camera3D PlayerCamera
     {
         Origin = [0, 0, 0]
