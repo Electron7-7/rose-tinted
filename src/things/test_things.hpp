@@ -18,7 +18,12 @@ public:
     std::vector<JPH::BodyID> mHitBodyIDs{};
 
 protected:
-    void OnCollisionDetected(Farg<JPH::BodyID>,ID) override;
+    void OnContactAdded(ID inOtherColliderID,
+        Farg<JPH::Body> inBody1,
+        Farg<JPH::Body> inBody2,
+        Farg<JPH::ContactManifold> manifold,
+        JPH::ContactSettings& ioSettings) override;
+    // void OnCollisionDetected(Farg<JPH::BodyID>,ID) override;
 
 private:
     glm::vec3 mMovementDirection{0.0f};
