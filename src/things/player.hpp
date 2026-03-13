@@ -9,6 +9,7 @@ class RoseTintedPlayer3D : public NostalgiaPlayer3D
 public:
     virtual void SetVariables(Farg<TheatreFile::ThingData>) override;
     virtual Shared<TheatreFile::ThingData> GetVariables() const override;
+    virtual void Shutdown() override;
     virtual void Tick() override;
     virtual void Ready() override;
 

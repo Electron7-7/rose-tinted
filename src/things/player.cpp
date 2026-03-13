@@ -73,6 +73,14 @@ void RoseTintedPlayer3D::Ready()
     GameState::PlayerColliderID = mMainColliderID;
 }
 
+void RoseTintedPlayer3D::Shutdown()
+{
+    GameState::PlayerColliderID = ID::Invalid;
+    MainWindow()->SetMouseMode(IWindow::MOUSE_MODE_VISIBLE);
+    GUI::SetInputFocus(true);
+    GUI::OpenAll();
+}
+
 void RoseTintedPlayer3D::Tick()
 {
     if(mCaptureKeyboard)
