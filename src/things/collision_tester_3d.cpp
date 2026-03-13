@@ -1,6 +1,6 @@
 #include "./test_things.hpp"
 #include "app/rose_tinted.hpp"
-#include "things/player.hpp"
+#include "common/game_state.hpp"
 #include <Nostalgia/physics/engine.hpp>
 #include <Nostalgia/theatre/theatre.hpp>
 
@@ -53,7 +53,6 @@ void CollisionTester3D::OnContactAdded(ID inOtherColliderID,
     JPH::ContactSettings& ioSettings)
 {
     Collider3D::OnContactAdded(inOtherColliderID, inBody1, inBody2, manifold, ioSettings);
-    if(my_theatre()->GetThinker<RoseTintedPlayer3D>(UID::a_Player)->GetMainColliderID()
-        == inOtherColliderID)
-            { RoseTinted::TriggerGameOver(); }
+    if(GameState::PlayerColliderID == inOtherColliderID)
+        { RoseTinted::TriggerGameOver(); }
 }

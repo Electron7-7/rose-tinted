@@ -1,5 +1,6 @@
 #include "./player.hpp"
 #include "gui/gui_globals.hpp"
+#include "common/game_state.hpp"
 #include <Nostalgia/application/application.hpp>
 #include <Nostalgia/theatre/things/thinkers/3d/collider_3d.hpp>
 #include <Nostalgia/theatre/things/thinkers/3d/mesh_instance_3d.hpp>
@@ -69,6 +70,7 @@ void RoseTintedPlayer3D::Ready()
     GUI::SetInputFocus(false);
     MainWindow()->SetMouseMode(IWindow::MOUSE_MODE_DISABLED);
     mCaptureKeyboard = mCaptureMouse = true;
+    GameState::PlayerColliderID = mMainColliderID;
 }
 
 void RoseTintedPlayer3D::Tick()
