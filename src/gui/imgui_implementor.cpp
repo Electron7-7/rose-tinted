@@ -21,8 +21,6 @@ void ImGui_Implementor::Attach()
     mState = STATE_ATTACHING;
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    // ImGuiIO& io = ImGui::GetIO();
-    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
     switch(sGraphicsAPI())
     {
@@ -35,7 +33,6 @@ void ImGui_Implementor::Attach()
         default:
             ErrorGraphicsAPI;
         }
-#pragma message("TODO: store the GLSL version in a global variable")
         ImGui_ImplOpenGL3_Init("#version 430");
         break;
     default:
@@ -122,14 +119,6 @@ void ImGui_Implementor::End()
     default:
         ErrorGraphicsAPI;
     }
-#pragma message("TODO: decide if I'm using ImGui's docking branch for multi-viewport support (multiple imgui windows)")
-    /*if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        GLFWwindow* backup_current_context = glfwGetCurrentContext();
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(backup_current_context);
-    }*/
 
     mState = STATE_IDLE;
 }

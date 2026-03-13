@@ -27,12 +27,10 @@ void GUI::OpenAll()
 {
     SetInputFocus(true);
     ImGuiMainMenu::SetOpen(true);
-    // ImGuiDebugger::SetOpen(true);
 }
 
 void GUI::CloseAll()
 {
     SetInputFocus(false);
     ImGuiMainMenu::SetOpen(false);
-    // ImGuiDebugger::SetOpen(false);
 }
