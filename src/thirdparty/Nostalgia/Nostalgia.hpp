@@ -5,8 +5,8 @@
 #define __n_make_string(x) __n_make_string_2(x)
 
 #define NOSTALGIA_VERSION_MAJOR 0
-#define NOSTALGIA_VERSION_MINOR 5
-#define NOSTALGIA_VERSION_PATCH 2
+#define NOSTALGIA_VERSION_MINOR 6
+#define NOSTALGIA_VERSION_PATCH 0
 #define NOSTALGIA_VERSION_STRING \
     __n_make_string(NOSTALGIA_VERSION_MAJOR) "." \
     __n_make_string(NOSTALGIA_VERSION_MINOR) "." \
@@ -58,13 +58,13 @@
 // Nostalgia
 #include <Nostalgia/core/types.hpp>                           // IWYU pragma: keep
 #include <Nostalgia/core/farg.hpp>                            // IWYU pragma: keep
+#include <Nostalgia/core/error.hpp>                           // IWYU pragma: keep
 #include <Nostalgia/core/constexpr_string_hash.hpp>           // IWYU pragma: keep
 #include <Nostalgia/core/id.hpp>                              // IWYU pragma: keep
 #include <Nostalgia/core/uid.hpp>                             // IWYU pragma: keep
 #include <Nostalgia/core/ansi_codes.hpp>                      // IWYU pragma: keep
 #include <Nostalgia/core/ansi_sequence.hpp>                   // IWYU pragma: keep
 #include <Nostalgia/core/message_labels.hpp>                  // IWYU pragma: keep
-#include <Nostalgia/core/error.hpp>                           // IWYU pragma: keep
 #include <Nostalgia/core/log.hpp>                             // IWYU pragma: keep
 #include <Nostalgia/core/time.hpp>                            // IWYU pragma: keep
 #include <Nostalgia/core/mutex.hpp>                           // IWYU pragma: keep
