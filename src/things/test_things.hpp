@@ -23,7 +23,6 @@ protected:
         Farg<JPH::Body> inBody2,
         Farg<JPH::ContactManifold> manifold,
         JPH::ContactSettings& ioSettings) override;
-    // void OnCollisionDetected(Farg<JPH::BodyID>,ID) override;
 
 private:
     glm::vec3 mMovementDirection{0.0f};
