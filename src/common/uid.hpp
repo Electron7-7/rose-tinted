@@ -5,7 +5,7 @@
 
 namespace RT_UID
 {
-    constinit const uint m_Cockpit{0x36};
+    constinit const ID m_Cockpit{0x36};
 }
 
 #endif // ROSE_TINTED_UIDS_H

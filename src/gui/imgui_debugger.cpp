@@ -33,7 +33,7 @@ void ImGuiDebugger::Update()
     if(Manager::GetTheatreState() == ManagerEnums::IN_LEVEL)
     {
         auto theatre{g_pTheatreManager->CurrentTheatre()};
-        auto player{theatre->GetThinker<RoseTintedPlayer3D>(UID::a_Player)};
+        auto player{theatre->GetThinker<RoseTintedPlayer3D>(UID::o_Player)};
         ImGui::Text("Thrust: %f", player->mThrust);
         ImGui::Text("Yaw:    %f", player->mYaw);
         ImGui::Text("Pitch:  %f", player->mPitch);

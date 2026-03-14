@@ -12,7 +12,7 @@ void GUI::SetInputFocus(bool inHasFocus)
         { MainWindow()->SetMouseMode(IWindow::MOUSE_MODE_VISIBLE); }
     if(Manager::GetTheatreState() == ManagerEnums::IN_LEVEL)
     {
-        auto player{g_pTheatreManager->CurrentTheatre()->GetThinker<RoseTintedPlayer3D>(UID::a_Player)};
+        auto player{g_pTheatreManager->CurrentTheatre()->GetThinker<RoseTintedPlayer3D>(UID::o_Player)};
         if(not inHasFocus)
         {
             player->mCaptureKeyboard = player->mCaptureMouse = true;
