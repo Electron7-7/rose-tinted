@@ -5,6 +5,10 @@
 #include "gui/imgui_debugger.hpp"
 #include "things/player.hpp"
 #include "things/test_things.hpp"
+#include "models.hpp"
+#include "common/uid.hpp"
+#include <Nostalgia/Nostalgia.hpp>
+#include <Nostalgia/theatre/variable_registry.hpp>
 #include <Nostalgia/application/window.hpp>
 #include <Nostalgia/events/event_queue.hpp>
 #include <Nostalgia/events/action.hpp>
@@ -70,6 +74,8 @@ int RoseTinted::Main()
     g_pInputManager->SetAction({"tilt_down",  Key::Down});
     g_pInputManager->SetAction({"roll_left",  Key::Left});
     g_pInputManager->SetAction({"roll_right", Key::Right});
+
+    VariableRegistry::RegisterResourceData(RT_UID::m_Cockpit, "CockpitModel", MakeShared<FileData>(Models::cockpit, sizeof(Models::cockpit), FileType::model_OBJ));
 
     m_sIsRunning = true;
     std::thread app_loop_thread{m_sApplicationRuntimeLoop};

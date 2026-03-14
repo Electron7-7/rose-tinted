@@ -5,7 +5,7 @@ declare CollisionTester3D inherits Collider3D
 
 Mesh CockpitMesh
 {
-    Model = 'assets/cockpit.obj'
+    Model = <CockpitModel>
     Material = <CockpitMaterial>
     Child : Material CockpitMaterial
     {

@@ -13,7 +13,13 @@ if(NOT NOSTALGIA_DEBUG)
     endif()
 endif()
 
-add_executable(RoseTinted ${ROSE_TINTED_SOURCES})
+set(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/assets)
+
+add_custom_command(OUTPUT models.hpp
+    COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR="${ASSETS_DIR}" -P ${ASSETS_DIR}/EmbedAssets.cmake
+    DEPENDS ${ASSETS_DIR}/models/cockpit.obj)
+
+add_executable(RoseTinted ${ROSE_TINTED_SOURCES} models.hpp)
 
 if(MSVC)
     set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
@@ -30,7 +36,7 @@ endif()
 option(CMAKE_EXPORT_COMPILE_COMMANDS "Generate a compile_commands.json file" OFF)
 mark_as_advanced(CLEAR CMAKE_EXPORT_COMPILE_COMMANDS)
 
-target_include_directories(RoseTinted PRIVATE
+target_include_directories(RoseTinted PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
     src/
     src/thirdparty
     src/thirdparty/freetype
