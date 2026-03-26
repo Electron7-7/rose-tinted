@@ -4,10 +4,9 @@
 #include <Nostalgia/events/event.hpp>
 #include <Nostalgia/application/application.hpp>
 #include <Nostalgia/managers/manager.hpp>
-#include <Nostalgia/managers/theatre_manager.hpp>
 #include <Nostalgia/physics/engine.hpp>
 #include <Nostalgia/theatre/theatre.hpp>
-#include <Nostalgia/theatre/things/thinkers/3d/collider_3d.hpp>
+#include <Nostalgia/things/thinkers/3d/collider_3d.hpp>
 
 bool ImGuiDebugger::m_sOpen{true};
 
@@ -32,8 +31,12 @@ void ImGuiDebugger::Update()
     ImGui::InputFloat("Player Velocity Multiplier", &RoseTintedPlayer3D::m_sVelocityMultiplier);
     if(Manager::GetTheatreState() == ManagerEnums::IN_LEVEL)
     {
-        auto theatre{g_pTheatreManager->CurrentTheatre()};
+        auto theatre{Theatre::Current()};
         auto player{theatre->GetThinker<RoseTintedPlayer3D>(UID::o_Player)};
+        auto pos1{theatre->GetThinker<Actor3D>(player->mLight1ID)->GlobalPosition()};
+        auto pos2{theatre->GetThinker<Actor3D>(player->mLight2ID)->GlobalPosition()};
+        ImGui::Text("Light 1 Position: [%f, %f, %f]", pos1[0], pos1[1], pos1[2]);
+        ImGui::Text("Light 2 Position: [%f, %f, %f]", pos2[0], pos2[1], pos2[2]);
         ImGui::Text("Thrust: %f", player->mThrust);
         ImGui::Text("Yaw:    %f", player->mYaw);
         ImGui::Text("Pitch:  %f", player->mPitch);

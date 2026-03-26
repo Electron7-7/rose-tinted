@@ -6,8 +6,9 @@
 #include "things/player.hpp"
 #include "things/test_things.hpp"
 #include "models.hpp"
-#include "common/uid.hpp"
 #include <Nostalgia/Nostalgia.hpp>
+#include <Nostalgia/things/thing_factory.hpp>
+#include <Nostalgia/things/resources/mesh.hpp>
 #include <Nostalgia/theatre/variable_registry.hpp>
 #include <Nostalgia/application/window.hpp>
 #include <Nostalgia/events/event_queue.hpp>
@@ -20,7 +21,7 @@
 #include <Nostalgia/managers/ui_manager.hpp>
 #include <Nostalgia/settings/engine.hpp>
 #include <Nostalgia/ui/implementor.hpp>
-#include <Nostalgia/theatre/thing_factory.hpp>
+#include <Nostalgia/theatre/resource_database.hpp>
 #include <thread>
 
 bool RoseTinted::m_sIsRunning{false};
@@ -48,8 +49,8 @@ int RoseTinted::Main()
     mMainWindow = IWindow::CreateNewWindow(IWindow::Properties{std::format("Rose-Tinted Glasses (Using Nostalgia v" NOSTALGIA_VERSION_STRING ")")});
 
     auto& imgui_impl{UI_Implementor::Create<ImGui_Implementor>()};
-    auto& main_menu{imgui_impl->CreateSolution<ImGuiMainMenu>()};
-    auto& debugger{imgui_impl->CreateSolution<ImGuiDebugger>()};
+    imgui_impl->CreateSolution<ImGuiMainMenu>();
+    imgui_impl->CreateSolution<ImGuiDebugger>();
 
     IManager::Add(g_pPhysicsManager);
     IManager::Add(g_pTheatreManager);
@@ -63,6 +64,8 @@ int RoseTinted::Main()
     ThingFactory::AddThing(&ThingFactory::ThingMakerTemplate<RoseTintedPlayer3D>, "RoseTintedPlayer3D", ThingType::NostalgiaPlayer3D);
     ThingFactory::AddThing(&ThingFactory::ThingMakerTemplate<CollisionTester3D>, "CollisionTester3D", ThingType::Collider3D);
 
+    ResourceDatabase::Register(Mesh::CreateFromMemory(Models::cockpit, std::size(Models::cockpit), Mesh::MODEL_OBJ), "CockpitModel");
+
     g_pInputManager->SetAction({"toggle_main_menu", Key::Escape});
     g_pInputManager->SetAction({"toggle_fullscreen", Key::F10});
     g_pInputManager->SetAction({"forward",    Key::W});
@@ -74,8 +77,6 @@ int RoseTinted::Main()
     g_pInputManager->SetAction({"tilt_down",  Key::Down});
     g_pInputManager->SetAction({"roll_left",  Key::Left});
     g_pInputManager->SetAction({"roll_right", Key::Right});
-
-    VariableRegistry::RegisterResourceData(RT_UID::m_Cockpit, UID::ReservedType::Model, "CockpitModel", MakeShared<FileData>(Models::cockpit, sizeof(Models::cockpit), FileType::model_OBJ));
 
     m_sIsRunning = true;
     std::thread app_loop_thread{m_sApplicationRuntimeLoop};

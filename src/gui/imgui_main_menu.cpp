@@ -16,8 +16,9 @@ void ImGuiMainMenu::Input(InputEvent* inEvent)
 {
     if(inEvent->IsInputAction() and inEvent->IsActive("toggle_main_menu"))
         { GUI::SetInputFocus(m_sOpen = !m_sOpen); }
-    else if(inEvent->IsJustPressed(Key::F5) and g_pTheatreManager->LoadNewTheatre(mTheatrePath))
+    else if(inEvent->IsJustPressed(Key::F5))
     {
+        g_pTheatreManager->LoadFromFile(mTheatrePath);
         GUI::SetInputFocus(m_sOpen = false);
         mLastTheatrePath = mTheatrePath;
     }
@@ -43,8 +44,9 @@ void ImGuiMainMenu::Update()
         { ImGui::End(); return; }
     ImGui::InputText("Theatre File Path", &mTheatrePath);
     ImGui::SameLine();
-    if(ImGui::Button("Load Theatre") and g_pTheatreManager->LoadNewTheatre(mTheatrePath))
+    if(ImGui::Button("Load Theatre"))
     {
+        g_pTheatreManager->LoadFromFile(mTheatrePath);
         GUI::SetInputFocus(m_sOpen = false);
         mLastTheatrePath = mTheatrePath;
     }

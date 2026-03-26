@@ -2,8 +2,8 @@
 #include "gui/gui_globals.hpp"
 #include "common/game_state.hpp"
 #include <Nostalgia/application/application.hpp>
-#include <Nostalgia/theatre/things/thinkers/3d/collider_3d.hpp>
-#include <Nostalgia/theatre/things/thinkers/3d/mesh_instance_3d.hpp>
+#include <Nostalgia/things/thinkers/3d/collider_3d.hpp>
+#include <Nostalgia/things/thinkers/3d/mesh_instance_3d.hpp>
 #include <Nostalgia/events/event.hpp>
 #include <Nostalgia/managers/input_manager.hpp>
 #include <Nostalgia/physics/engine.hpp>
@@ -11,7 +11,6 @@
 #include <Nostalgia/settings/world.hpp>
 #include <Nostalgia/settings/player.hpp>
 #include <Nostalgia/theatre/theatre.hpp>
-#include <Nostalgia/theatre/thing_factory.hpp>
 
 using namespace TheatreFile;
 
@@ -22,7 +21,7 @@ float RoseTintedPlayer3D::m_sLinearFriction{0.1f};
 
 void RoseTintedPlayer3D::SetVariables(Farg<ThingData> data)
 {
-    NostalgiaPlayer3D::SetVariables(data);
+    Super::SetVariables(data);
 
     data.get_variable(mCockpitOffset, "CockpitOffset");
     data.get_variable(Settings::Player::EnableGravity, "EnableGravity", "Gravity", "Fall");
@@ -30,7 +29,7 @@ void RoseTintedPlayer3D::SetVariables(Farg<ThingData> data)
 
 Shared<ThingData> RoseTintedPlayer3D::GetVariables() const
 {
-    Shared<ThingData> data{NostalgiaPlayer3D::GetVariables()};
+    Shared<ThingData> data{Super::GetVariables()};
 
     data->set_variable(mCockpitOffset, "CockpitOffset");
     data->set_variable(Settings::Player::EnableGravity, "EnableGravity");
@@ -40,12 +39,12 @@ Shared<ThingData> RoseTintedPlayer3D::GetVariables() const
 
 void RoseTintedPlayer3D::Ready()
 {
-    NostalgiaPlayer3D::Ready();
+    Super::Ready();
 
     bool _has_collider{false};
     for(ID child : Children())
     {
-        if(ThingFactory::IsDerivedFrom(my_theatre()->TypeOf(child), ThingType::Collider3D))
+        if(Theatre::Current()->DerivedFrom(child, ThingType::Collider3D))
             { _has_collider = true; mMainColliderID = child; }
     }
     if(!_has_collider)
@@ -56,13 +55,13 @@ void RoseTintedPlayer3D::Ready()
         coll_dat.set_variable(mLocalTransform.scale, "Scale");
         coll_dat.set_variable(MotionType::Dynamic, "Motion");
         coll_dat.set_variable(ShapeType::Box, "Shape");
-        mMainColliderID = my_theatre()->CreateThing(coll_dat);
+        mMainColliderID = Theatre::Current()->CreateThing(coll_dat);
         mLocalTransform.scale = glm::vec3{1.0f};
-        PhysicsEngine::Instance()->BodyInterface().SetGravityFactor(my_theatre()
+        PhysicsEngine::Instance()->BodyInterface().SetGravityFactor(Theatre::Current()
             ->GetThinker<Collider3D>(mMainColliderID)->id(), 0);
     }
 
-    if(auto cockpit{my_theatre()->GetThing("Cockpit")};
+    if(auto cockpit{Theatre::Current()->GetThing("Cockpit")};
         not cockpit->uid().invalid())
             { mCockPitID = cockpit->uid(); }
 
@@ -97,7 +96,7 @@ void RoseTintedPlayer3D::Tick()
     else
         { mYaw = mPitch = mRoll = mThrust = 0.0f; }
 
-    auto collider{my_theatre()->GetThinker<Collider3D>(mMainColliderID)};
+    auto collider{Theatre::Current()->GetThinker<Collider3D>(mMainColliderID)};
     auto phys{PhysicsEngine::Instance()};
     auto& body_interface{phys->BodyInterface()};
     FAUTO quaternion{Quaternion()};
@@ -134,7 +133,7 @@ void RoseTintedPlayer3D::Tick()
     }
     if(not mCockPitID.invalid())
     {
-        auto cockpit{my_theatre()->GetThinker<Actor3D>(mCockPitID)};
+        auto cockpit{Theatre::Current()->GetThinker<Actor3D>(mCockPitID)};
         cockpit->SetPosition(collider->Position());
         cockpit->SetQuaternion(collider->Quaternion());
     }

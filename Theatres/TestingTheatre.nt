@@ -3,24 +3,22 @@
 declare RoseTintedPlayer3D inherits NostalgiaPlayer3D
 declare CollisionTester3D inherits Collider3D
 
-Mesh CockpitMesh
-{
-    Model = <CockpitModel>
-    Material = <CockpitMaterial>
-    Child : Material CockpitMaterial
-    {
-        NoTexture = [true]
-        Color = [0.9, 1, 1]
-        SpecularStrength = [0]
-    }
-}
+Texture CockpitTexture
+{ File = 'cockpit.png' }
 
 Actor3D Cockpit
 {
     Child : MeshInstance3D CockpitMeshInstance
     {
         Origin = [0, -1, 0]
-        Mesh = <CockpitMesh>
+        Mesh = <CockpitModel>
+        MaterialOverride = <CockpitMaterial>
+        Child : Material CockpitMaterial
+        {
+            DiffuseTexture = <CockpitTexture>
+            SpecularStrength = [0]
+            FullBright = [true]
+        }
     }
 }
 
@@ -30,7 +28,17 @@ RoseTintedPlayer3D ThePlayer
     Child : Camera3D PlayerCamera
     {
         Origin = [0, 0, 0]
-        EnvironmentColor [0.06, 0.08, 0.1]
+        EnvironmentColor = [0.06, 0.08, 0.1]
+    }
+    Child : SpotLight3D Flashlight
+    {
+        Color = [1,1,1]
+        Origin = [0, -0.2, -2]
+        Range = [400]
+        Energy = [1]
+        SpotAngle = [22.6]
+        SpotAngleFade = [4]
+        AmbientStrength = [0]
     }
 }
 
@@ -112,6 +120,7 @@ Collider3D Floor
     }
 }
 
+///
 SpotLight3D TheSun
 {
     Position = [4, 100, -7]
@@ -135,3 +144,4 @@ SpotLight3D SomeLight
     SpotAngle = [30]
     SpotAngleFade = [20]
 }
+///

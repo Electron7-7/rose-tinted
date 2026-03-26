@@ -2,14 +2,15 @@
 #define TEST_THINGS_H
 
 #include <Nostalgia/Nostalgia.hpp>
-#include <Nostalgia/theatre/things/thinkers/3d/collider_3d.hpp>
+#include <Nostalgia/things/thinkers/3d/collider_3d.hpp>
 
 class CollisionTester3D : public Collider3D
 {
 public:
+    SUPER(Collider3D)
+    READY_OVERRIDE
     SET_VARIABLES_OVERRIDE
     GET_VARIABLES_OVERRIDE
-    READY_OVERRIDE
 
     void Update() override;
     void Tick() override;

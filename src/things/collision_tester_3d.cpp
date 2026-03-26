@@ -8,7 +8,7 @@ void CollisionTester3D::SetVariables(Farg<TheatreFile::ThingData> data)
 {
     auto outData{data};
     outData.set_variable(MotionType::Dynamic, "Motion");
-    Collider3D::SetVariables(outData);
+    Super::SetVariables(outData);
 
     data.get_variable(mGravity, "Gravity", "GravityFactor");
     data.get_variable(mMovementSpeed, "Speed");
@@ -18,7 +18,7 @@ void CollisionTester3D::SetVariables(Farg<TheatreFile::ThingData> data)
 
 Shared<TheatreFile::ThingData> CollisionTester3D::GetVariables() const
 {
-    auto data{Collider3D::GetVariables()};
+    auto data{Super::GetVariables()};
 
     data->set_variable(mGravity, "Gravity");
     data->set_variable(glm::normalize(mMovementDirection), "Direction");
@@ -29,7 +29,7 @@ Shared<TheatreFile::ThingData> CollisionTester3D::GetVariables() const
 
 void CollisionTester3D::Ready()
 {
-    Collider3D::Ready();
+    Super::Ready();
 
     PhysicsEngine::Instance()->BodyInterface().SetGravityFactor(mBodyID, mGravity);
     PhysicsEngine::Instance()->BodyInterface().AddForce(mBodyID,
@@ -38,12 +38,12 @@ void CollisionTester3D::Ready()
 
 void CollisionTester3D::Update()
 {
-    Collider3D::Update();
+    Super::Update();
 }
 
 void CollisionTester3D::Tick()
 {
-    Collider3D::Tick();
+    Super::Tick();
 }
 
 void CollisionTester3D::OnContactAdded(ID inOtherColliderID,
@@ -52,7 +52,7 @@ void CollisionTester3D::OnContactAdded(ID inOtherColliderID,
     Farg<JPH::ContactManifold> manifold,
     JPH::ContactSettings& ioSettings)
 {
-    Collider3D::OnContactAdded(inOtherColliderID, inBody1, inBody2, manifold, ioSettings);
+    Super::OnContactAdded(inOtherColliderID, inBody1, inBody2, manifold, ioSettings);
     if(GameState::PlayerColliderID == inOtherColliderID)
         { RoseTinted::TriggerGameOver(); }
 }

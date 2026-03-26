@@ -3,8 +3,8 @@
 #include "things/player.hpp"
 #include <Nostalgia/Nostalgia.hpp>
 #include <Nostalgia/application/application.hpp>
-#include <Nostalgia/managers/theatre_manager.hpp>
 #include <Nostalgia/theatre/theatre.hpp>
+#include <Nostalgia/managers/manager.hpp>
 
 void GUI::SetInputFocus(bool inHasFocus)
 {
@@ -12,7 +12,7 @@ void GUI::SetInputFocus(bool inHasFocus)
         { MainWindow()->SetMouseMode(IWindow::MOUSE_MODE_VISIBLE); }
     if(Manager::GetTheatreState() == ManagerEnums::IN_LEVEL)
     {
-        auto player{g_pTheatreManager->CurrentTheatre()->GetThinker<RoseTintedPlayer3D>(UID::o_Player)};
+        auto player{Theatre::Current()->GetThinker<RoseTintedPlayer3D>(UID::o_Player)};
         if(not inHasFocus)
         {
             player->mCaptureKeyboard = player->mCaptureMouse = true;
