@@ -13,21 +13,18 @@ public:
 
     using Things_t = std::unordered_map<ID, Shared<Thing>>;
 
-    bool mDoPrintDebugLogs{false};
+    static Theatre* Current();
 
-    Theatre() noexcept;
-    Theatre(Shared<TheatreFile::TheatreData>) noexcept;
-    Theatre(Farg<FileData> inTheatreFileData) noexcept;
-    Theatre(Sarg inTheatreFilePath) noexcept;
-
+    explicit Theatre() noexcept;
     virtual ~Theatre() noexcept;
 
     virtual void Update();
     virtual void Tick();
     virtual void Input(InputEvent*);
 
-    virtual Error Load(Farg<FileData> inTheatreFileData);
-    virtual Error Load(Sarg inTheatreFilePath);
+    virtual void  LoadTheatreData(Shared<TheatreFile::TheatreData> inTheatreData);
+    virtual Error LoadData(Farg<FileData> inData);
+    virtual Error LoadFile(Sarg inFilePath);
     virtual Error Save(Sarg inOutputFilePath, FileOverwriteAction = RENAME);
     virtual bool  Startup();
     virtual bool  Shutdown();
@@ -40,17 +37,20 @@ public:
 
     Error InitStatus() const;
     bool  IsStarted()  const;
-    Farg<VariableRegistry>         Registry() const;
     Farg<TheatreFile::TheatreData> InitialState() const;
     TheatreFile::TheatreData       CurrentState();
 
-    IdVec_t   ThingIDs();
-    bool      ThingExists(ID);
-    bool      ThingExists(Sarg inName);
-    FPID      TypeOf(ID);
-    bool      DerivedFrom(ID, FPID);
-    ID        CreateThing(Farg<TheatreFile::ThingData>);
-    Error     DestroyThing(ID);
+    IdVec_t ThingIDs();
+    bool    ThingExists(ID);
+    bool    ThingExists(Sarg inName);
+    FPID    TypeOf(ID);
+    bool    DerivedFrom(ID, FPID);
+    ID      CreateThing(Farg<TheatreFile::ThingData>);
+    Error   DestroyThing(ID);
+    ID      GetUID(Sarg inName);
+    Sarg    GetName(ID);
+    Error   SetName(ID inUID, Sarg inNewName);
+    Error   SetName(Sarg inOldName, Sarg inNewName);
 
     Shared<Viewport> GetRootViewport();
     IdSet_arg GetViewports(); // Does not include the root viewport
@@ -65,7 +65,6 @@ public:
     Error SetParent(ID inChildID, ID inParentID);
     Error DropParent(ID inChildID);
 
-    /// Note: This will return the *first* `Thing` that has the name `ThingName`.
     Shared<Thing>    GetThing(Sarg ThingName);
     Shared<Thing>    GetThing(ID ObjectID);
     Shared<Resource> GetResource(ID ObjectID);
@@ -77,7 +76,6 @@ public:
             if(auto resource{DCast<T>(GetResource(ObjectID))})
                 { return resource; }
             auto output{MakeShared<T>()};
-            output->m_pRootTheatre = this;
             return output;
         }
 
@@ -87,7 +85,6 @@ public:
             if(auto thinker{DCast<T>(GetThinker(ObjectID))})
                 { return thinker; }
             auto output{MakeShared<T>()};
-            output->m_pRootTheatre = this;
             return output;
         }
 
@@ -95,11 +92,14 @@ protected:
     std::string mName{"Untitled Theatre"};
     uint mIndex{ID::Invalid};
     std::string mTheatreFileDirectory{""};
-    bool mWasLoadedFromFile{false};
+    bool mIsStarted{false},
+        mWasLoadedFromFile{false};
+    Error mInitStatus{ERR_UNINITIALIZED};
 
     RMutex mThingsMutex{},
         mCallSheetMutex{};
     Things_t mThings{};
+    std::map<std::string, ID> mNames{};
     IdSet_t mLightIDs{},
         mCamera3DIDs{},
         mCamera2DIDs{},
@@ -107,21 +107,17 @@ protected:
         mVisual2DIDs{},
         mViewportIDs{};
     CallSheet mCallSheet{};
-    UID mUIDs{};
 
     Shared<Viewport> m_pRootViewport{nullptr};
-    Shared<VariableRegistry> m_pRegistry{nullptr};
     Shared<TheatreFile::TheatreData> m_pInitialState{nullptr};
 
-    Error mInitStatus{ERR_UNINITIALIZED};
-    bool mIsStarted{false};
-
-    void SetupOwnership(Farg<TheatreFile::ThingData>);
+    bool  LoadCurrentTheatreData();
+    void SetupOwnership(TheatreFile::ThingData&, bool isStartup = false);
     void SetupUID(TheatreFile::ThingData&);
 
     void  CreateEmbeddedResources();
-    ID    CreateThingNoReady(Farg<TheatreFile::ThingData>);
-    ID    CreateThingNoReady(TheatreFile::ThingData&);
+    ID    CreateThingNoReady(Farg<TheatreFile::ThingData>, bool doSetup = true);
+    ID    CreateThingNoReady(TheatreFile::ThingData&, bool doSetup = true);
     Error DestroyThingOnly(ID);
 
     void Draw3DThinkers(Shared<Viewport>);

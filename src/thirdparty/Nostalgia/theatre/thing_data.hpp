@@ -20,12 +20,6 @@ namespace TheatreFile
         std::string  value{};
         // The variable's type.
         ThingVarType type{ThingVarType::None};
-        // If `ThingData::set_variable` was used to create a `ThingVariable` with an `ID`
-        // value, `thing_uid` is assigned a value. This avoids errors due to `ThingData` not
-        // having a `VariableRegistry` pointer assigned.
-        //
-        // This variable is ignored if `ThingVariable::type` is not set to `ThingVarType::ID`.
-        ID thing_uid{};
 
         void clear()
         { *this = ThingVariable{}; }
@@ -58,12 +52,6 @@ namespace TheatreFile
         ID            uid{};
         ThingVariable parent_variable{};
         ThingVarArray children_variables{};
-        // When a `Theatre` generates its `ThingData` vector, it will set `theatre_registry` to
-        // its `VariableRegistry` member. This is used when attempting to get the value of `ID`,
-        // "Child", and "Parent" variables; if it's `nullptr` when either `get_parent`,
-        // `get_children`, or `get_variable` with an `ID` variable is called, the respective
-        // function will return an error and leave the passed variable reference untouched.
-        Shared<VariableRegistry> theatre_registry{nullptr};
 
         std::string get_log() const noexcept;
         std::string get_parsable_string() const noexcept;
@@ -74,12 +62,12 @@ namespace TheatreFile
         IdSet_t get_children() const;
 
         Error remove_variable(Sarg inName);
-        Error remove_child(ID inID);
         Error remove_child(Sarg inName);
 
         void  set_variable(Sarg inValue, Sarg inName);
         Error set_variable(ID inValue, Sarg inName);
         void  set_variable(bool inValue, Sarg inName);
+        Error set_variable(Shared<FileData> inValue, Sarg inName);
 
         template<NumberOrGLM T, StringType... Names>
             void set_variable(Farg<T> inValue, Sarg inName)
@@ -93,6 +81,17 @@ namespace TheatreFile
                     { return ERR_INVALID; }
                 variables.emplace_back(inName, enum_name, ThingVarType::Enum);
                 return OK;
+            }
+
+        template<StringType... Names>
+            Error get_variable(Shared<FileData>& outValue, Names... inNames) const
+            {
+                ASSERT_THING_VARIABLE(thing_var, inNames, ERR_NOT_FOUND)
+                if(thing_var.value.empty())
+                    { return ERR_EMPTY; }
+                else if(thing_var.type == ThingVarType::String)
+                    { return outValue->LoadFile(thing_var.value); }
+                return ERR_MISMATCHED_TYPES;
             }
 
         template<StringContainer T, StringType... Names>

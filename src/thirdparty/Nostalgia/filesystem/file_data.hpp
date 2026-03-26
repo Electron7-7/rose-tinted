@@ -20,7 +20,7 @@ public:
     static FileType s_DetectFileType(Farg<std::string> FilePath);
 
     FileData();
-    FileData(const unsigned char* Data, int Size, FileType Type);
+    FileData(const unsigned char* Data, int Size, FileType Type = FileType::Unknown);
     FileData(Farg<std::string> Path, FileType Type = FileType::Unknown);
     ~FileData();
 
@@ -40,12 +40,10 @@ public:
     void clear();
 
 private:
-    const unsigned char* mData{nullptr};
-    int mSize{0};
+    std::vector<uchar> mData{};
     std::string mPath{};
     FileType mType{FileType::Unknown};
     Error mStatus{ERR_EMPTY};
-    bool mReleaseData{false};
 };
 
 #endif // FILE_DATA_H

@@ -16,39 +16,11 @@ public:
         std::type_index index{typeid(std::nullptr_t)};
     };
 
-    using ResourceData = std::map<PID, Shared<FileData>>;
-    using References   = std::map<PID, ID>;
     using Enums        = std::map<std::string, enum_pair>;
 
     VariableRegistry() noexcept;
 
-    Farg<References>          GetRegisteredIDs() const;
-    static Farg<Enums>        GetRegisteredEnums();
-    static Farg<ResourceData> GetRegisteredResourceData();
-
-    void Init();
-
-    bool  try_GetID(Sarg inName, ID& outID);
-    bool  try_GetIDName(ID inID, std::string& outName);
-    ID    GetID(Sarg inName);
-    Sarg  GetIDName(ID inID);
-    Error RegisterID(Sarg inName, ID inID, bool doNoCopies = true);
-    Error RemoveID(Sarg inName);
-    Error RemoveID(ID);
-    void  ClearIDs();
-    bool  HasID(ID);
-    bool  HasID(Sarg inName);
-
-    static bool try_GetResourceData(Sarg inName, Shared<FileData>& outData);
-    static bool try_GetResourceData(ID inID, Shared<FileData>& outData);
-    static Shared<FileData> GetResourceData(Sarg inName);
-    static Shared<FileData> GetResourceData(ID inID);
-    static bool HasResourceData(Sarg inName);
-    static bool HasResourceData(ID inID);
-    static Error RegisterResourceData(ID inID, UID::ReservedType inType, Sarg inName, Farg<Shared<FileData>> inData, bool doNoCopies = true);
-    static Error RemoveResourceData(Sarg inName);
-    static Error RemoveResourceData(ID inID);
-    static void ClearResourceData();
+    static Farg<Enums> GetRegisteredEnums();
 
     static void ClearEnums();
 
@@ -152,19 +124,14 @@ public:
             return ERR_NOT_FOUND;
         }
 
-private:
-    References mReferences{};
-    RMutex mReferencesMutex{};
+    static void RegisterEngineEnums();
 
-    void RegisterEngineReferences();
+private:
+    // Evil mutable keyword usage
+    mutable RMutex mReferencesMutex{};
 
     static Enums m_sEnums;
-    static ResourceData m_sResourceData;
-    static RMutex m_sEnumsMutex,
-        m_sResourceDataMutex;
-
-    static void RegisterEngineEnums();
-    static void RegisterEngineResourceData();
+    static RMutex m_sEnumsMutex;
 };
 
 #endif // THEATRE_VARIABLE_REGISTRY_H
